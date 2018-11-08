@@ -1,0 +1,111 @@
+*{
+	font-family: 'Tajawal', sans-serif !important;
+}
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	
+}
+
+ #map {
+	height: 100%;
+	width:100%;
+}
+
+#bottom-panel{
+	position: fixed;
+	
+	bottom: 0px;
+	
+	margin-right: auto;
+	margin-left: auto;
+	width:500px;
+	background-color:rgba(255,255,255,0.8);
+	
+}
+
+#Sliderji{
+	
+	width:80%;
+	margin:0 auto;
+	
+}
+
+#sliderLeto{
+	margin-top:50px;
+	height:80px;
+}
+
+#sliderMese{
+	height:80px;
+}
+
+#gumbki{
+	width:500px;
+	margin:0 auto;
+}
+
+#legenda{
+	
+	width:100%;
+	
+}
+
+
+#grad {
+	height:20px;
+	width:100%;
+	background: linear-gradient(-90deg, #ff0004,#f4ff30,#3bff00);
+	/*background: linear-gradient(-90deg, rgba(0, 255, 255, 0),
+				rgba(0, 255, 255, 1),
+				rgba(0, 191, 255, 1),
+				rgba(0, 127, 255, 1),
+				rgba(0, 63, 255, 1),
+				rgba(0, 0, 255, 1),
+				rgba(0, 0, 223, 1),
+				rgba(0, 0, 191, 1),
+				rgba(0, 0, 159, 1),
+				rgba(0, 0, 127, 1),
+				rgba(63, 0, 91, 1),
+				rgba(127, 0, 63, 1),
+				rgba(191, 0, 31, 1),
+				rgba(255, 0, 0, 1));*/
+				
+}
+
+.legenda{
+	
+	
+	color:white;
+	text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000; 
+}
+
+#malo{
+	width:33%;
+	position: relative;
+	left: 0px;
+	display: inline-block;
+	text-align: left;
+	
+}
+#srednje{
+	width:33%;
+	position: relative;
+	
+	display: inline-block;
+	text-align: center;
+}
+
+#dosti{
+	width:33%;
+	position: relative;
+	right: 0px;
+	float: right;
+	display: inline-block;
+	text-align: right;
+}

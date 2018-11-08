@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>HeatMap - Burja IoT</title>
+	<link rel="icon" type="image/png" href="favicon.png" />
+	
+	<link rel="stylesheet" href="css/stil.css">
+	<link rel="stylesheet" href="css/rSlider.min.css">
+	
+	<script
+	src="https://code.jquery.com/jquery-3.3.1.min.js"
+	integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	crossorigin="anonymous"></script>
+	<script src="js/rSlider.min.js"></script>
+	
+	<link href="https://fonts.googleapis.com/css?family=Tajawal" rel="stylesheet">
+	
+</head>
+
+<body>
+
+	<div id="map"></div>
+	
+	<div id="bottom-panel">
+		
+		
+		<div id="Sliderji">
+			<div id="sliderLeto">
+				<input type="text" id="sliderLeta" />
+			</div>
+			<div id="sliderMese">
+				<input type="text" id="sliderMesec" />
+			</div>
+		</div>
+		
+		<div id="gumbki">
+			<center>
+			<button onclick="changeOpacity()">Spremeni prosojnost</button>
+			
+			<input type="button" value="Prikaži sunke" id="hitrostSunki" onclick="gumbHitrost()"></input> 
+			</center>
+		</div>
+		
+		<div id="legenda">
+			Legenda:
+			<div id="grad">
+				<div id="malo" class="legenda">
+				&nbsp;&nbsp;0 km/h&nbsp;&nbsp;
+				</div>
+				<div id="srednje" class="legenda">
+				&nbsp;&nbsp;100 km/h&nbsp;&nbsp;
+				</div>
+				
+				<div id="dosti" class="legenda">
+				&nbsp;&nbsp;200 km/h&nbsp;&nbsp;
+				</div>
+			</div>
+		</div>
+		
+		
+	</div>
+	
+	<script>
+		
+		var veterHitrostSunki=0;
+		
+		//HEATMAP
+		// Spremenljivke
+		var map, heatmap,heatmap2;
+		
+		var pointArray = null;
+		var pointArray2 = null;
+		var firstData = true;
+		
+		function initMap() {
+			
+			var mapOptions = {
+				zoom: 12,
+				center: {lat: 45.890881, lng: 13.884268}, 
+				mapTypeId: 'hybrid',
+				maxZoom:15,
+				minZoom:9
+				
+			};
+			map = new google.maps.Map(document.getElementById('map'),mapOptions);
+			
+			
+			
+			
+			
+			pointArray = new google.maps.MVCArray([
+				new google.maps.LatLng(45.890881, 13.884268),
+				new google.maps.LatLng(45.890881, 13.864268),
+				new google.maps.LatLng(45.890881, 13.874268),
+				new google.maps.LatLng(45.890881, 13.894268),
+				new google.maps.LatLng(45.860881, 13.894268)
+			]);
+			pointArray2 = new google.maps.MVCArray([
+				new google.maps.LatLng(45.890881, 13.894268),
+				new google.maps.LatLng(45.880881, 13.894268),
+				new google.maps.LatLng(45.870881, 13.894268),
+				new google.maps.LatLng(45.860881, 13.894268)
+			]);
+			
+			
+			
+			heatmap = new google.maps.visualization.HeatmapLayer({
+				data: pointArray,
+				map: map,
+				maxIntensity: 80
+				//dissipating: true
+				
+			});
+			
+			heatmap.set('gradient', ['rgba(59, 255, 0, 0)','#3bff00','#f4ff30','#ff0004']);
+			heatmap.set('opacity',0.9);
+			/*
+				20 : 1128.497220
+				19 : 2256.994440
+				18 : 4513.988880
+				17 : 9027.977761
+				16 : 18055.955520
+				15 : 36111.911040
+				14 : 72223.822090
+				13 : 144447.644200
+				12 : 288895.288400
+				11 : 577790.576700
+				10 : 1155581.153000
+				9  : 2311162.307000
+				8  : 4622324.614000
+				7  : 9244649.227000
+				6  : 18489298.450000
+				5  : 36978596.910000
+				4  : 73957193.820000
+				3  : 147914387.600000
+				2  : 295828775.300000
+				1  : 591657550.500000
+				*/
+			var zooms =    [9,10,11,12,13,14,15];
+			var radiuses = [10,15,30,40,70,150,250];
+			
+			heatmap.set('radius', 50);
+			map.addListener('zoom_changed', function() {
+				
+				//bolj ko gres notr manjsi je zoom
+				//bolj notr vecji radius
+				heatmap.set('radius', radiuses[zooms.indexOf(map.getZoom())]);
+				console.log( radiuses[zooms.indexOf(map.getZoom())]);
+			});
+		}
+		
+		//Branje iz baze
+		function spremeniPodatke(mesec, leto) {
+			
+			var jsonData;
+			
+			$.ajax({
+				url : 'http://83.212.127.93/qery.php?mesec='+mesec+'&leto='+leto, 
+				type : 'GET',
+				success : function(data){
+					jsonData = jQuery.parseJSON(data);
+					
+					//console.log(jsonData[0]["Latitude"]);
+					
+					pointArray = new google.maps.MVCArray([]);
+					
+					
+					if(mesec=="Povprecje"){
+						for(var i=0;i<jsonData.length;i++){
+						
+							if(veterHitrostSunki){
+								for(var j=0;j-2<jsonData[i]["HitrostVetra"];j++){
+									pointArray.push(new google.maps.LatLng(jsonData[i]["Latutide"], jsonData[i]["Longitude"]));
+								}
+								console.log(jsonData[i]["Latutide"]+" "+jsonData[i]["Longitude"]+" "+jsonData[i]["HitrostVetra"]);
+							}
+							else{
+								for(var j=0;j-2<jsonData[i]["PovprecniSunki"];j++){
+									pointArray.push(new google.maps.LatLng(jsonData[i]["Latutide"], jsonData[i]["Longitude"]));
+								}
+								console.log(jsonData[i]["Latutide"]+" "+jsonData[i]["Longitude"]+" "+jsonData[i]["PovprecniSunki"]);
+							}
+						}
+					}
+					
+					else{
+						for(var i=0;i<jsonData.length;i++){
+							//var datum = new Date(jsonData[i]["TimeStamp"]);
+							//console.log(datum);
+							//if(datum.getFullYear() == leto && datum.getMonth() == mesec){
+							for(var j=0;j-2<jsonData[i]["HitrostVetra"];j++){
+								pointArray.push(new google.maps.LatLng(jsonData[i]["Latitude"], jsonData[i]["Longitude"]));
+							}
+							console.log(jsonData[i]["Latitude"]+" "+jsonData[i]["Longitude"]);
+							//}
+							/*else{
+								console.log("Ni pravi");
+							}*/
+						}
+						
+					}
+					
+					heatmap.setData(pointArray);
+					
+				}
+			});
+			
+			
+		}
+		
+		function changeOpacity() {
+			heatmap.set('opacity', heatmap.get('opacity')==0.3 ? 0.9 : 0.3);
+		}
+		
+		
+		
+		
+		
+		//SLIDERJI
+		
+		var sliderLeta = new rSlider({
+			target: '#sliderLeta',
+			values: [2017,2018],
+			range: false,
+			tooltip: true,
+			scale: true,
+			labels: true,
+			set: [2018],
+			onChange: function (values) {
+				var mesec = sliderMesec.getValue();
+				var leto=values;
+				spremeniPodatke(mesec,leto);
+			}
+		});
+		
+		var d = new Date();
+		var n = d.getMonth()+1;
+		
+		var sliderMesec = new rSlider({
+			target: '#sliderMesec',
+			values: [1,2,3,4,5,6,7,8,9,10,11,12,"Povprecje"],
+			range: false,
+			tooltip: true,
+			scale: true,
+			labels: true,
+			set: [n],
+			onChange: function (values) {
+				var leto = sliderLeta.getValue();
+				var mesec=values; 
+				spremeniPodatke(mesec,leto);
+			}
+		});
+		
+		function gumbHitrost(){
+			
+			if(veterHitrostSunki==0)
+				veterHitrostSunki=1;
+			else
+				veterHitrostSunki=0;
+			console.log(veterHitrostSunki);
+			
+			var leto = sliderLeta.getValue();
+			var mesec = sliderMesec.getValue();
+			spremeniPodatke(mesec,leto);
+			
+			if (veterHitrostSunki==1)
+				document.getElementById("hitrostSunki").value = "Prikaži sunke";
+			else
+				document.getElementById("hitrostSunki").value = "Prikaži povprečno hitrost";
+			
+		}
+		
+		
+		
+		
+		
+	</script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJihVEXKobert71GwnOiFb62HkS2qeKgQ&libraries=visualization&callback=initMap"></script>
+	
+	
+</body>
+</html>
