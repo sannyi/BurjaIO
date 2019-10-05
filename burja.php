@@ -1,6 +1,6 @@
 <?php
 	
-	$link = new mysqli("127.0.0.1","root","ife","burjaIO");
+	$link = new mysqli("127.0.0.1","credential_sample1","credential_sample1","dataBase");
 	
 	if(!$link){
 		
@@ -26,6 +26,7 @@
 		$hitrost = $_GET["hitrost"];
 		
 		$sql = "INSERT INTO Podatki (Lokacija, Latitude, Longtitude, Naprava, Temperatura, HitrostVetra) VALUES ('$lokacija','$lat','$longt','$naprava','$temperatura','$hitrost')";
+		//write down PDO
 		echo $sql;
 		$link->query($sql);
 		echo $link->error;
