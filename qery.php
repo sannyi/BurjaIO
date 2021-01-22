@@ -1,34 +1,21 @@
 <?php
-	
-	
-	//?mesec=05&leto=2018
-	
-	
+
 	if(isset($_GET['mesec'])&&isset($_GET['leto'])) {
 		$mesec=$_GET['mesec'];
 		$leto=$_GET['leto'];
-	} else {
+	}
+	else {
 		echo("NAPAKA v URLju!");
 		exit(1);
 	}
-	
-	/*
-	echo($mesec);
-	echo("<br/>");
-	echo($leto);
-	echo("<br/>");
-	*/
-	
-	
+
 	$servername = "localhost";
 	$username = "root";
 	$password = "ife";
 	$dbname = "burjaIO";
 	
-	// Create connection
 	$conn = new mysqli($servername, $username, $password, $dbname);
 	
-	// Check connection
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	} 
