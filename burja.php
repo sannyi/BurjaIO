@@ -1,5 +1,4 @@
 <?php
-	
 	$link = new mysqli("127.0.0.1","credential_sample1","credential_sample1","dataBase");
 	
 	if(!$link){
@@ -10,24 +9,15 @@
 		exit;
 	}
 	
-	if(
-		isset($_GET["lokacija"]) &&
-		isset($_GET["lat"]) &&
-		isset($_GET["longt"]) &&
-		isset($_GET["naprava"]) &&
-		isset($_GET["temperatura"]) &&
-		isset($_GET["hitrost"])
-	){
+	if(	isset($_GET["lokacija"]) && isset($_GET["lat"]) && isset($_GET["longt"]) && isset($_GET["naprava"]) && isset($_GET["temperatura"]) && isset($_GET["hitrost"])){
+		
 		$lokacija = $_GET["lokacija"];
-		$lat = $_GET["lat"];
-		$longt = $_GET["longt"];
+		$lat = $_GET["lat"]; $longt = $_GET["longt"];
 		$naprava=$_GET["naprava"];
-		$temperatura = $_GET["temperatura"];
-		$hitrost = $_GET["hitrost"];
+		$temperatura = $_GET["temperatura"]; $hitrost = $_GET["hitrost"];
 		
 		$sql = "INSERT INTO Podatki (Lokacija, Latitude, Longtitude, Naprava, Temperatura, HitrostVetra) VALUES ('$lokacija','$lat','$longt','$naprava','$temperatura','$hitrost')";
-		//write down PDO
-		echo $sql;
+		
 		$link->query($sql);
 		echo $link->error;
 		$link->close();
@@ -35,10 +25,5 @@
 	else{
 		echo "Podatki niso podani!!";
 		$link->close();
-	}
-	
-	
-	
-	
-	
+	}	
 ?>
